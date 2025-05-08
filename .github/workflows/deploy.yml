@@ -1,43 +1,31 @@
-name: Deploy to gh-pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: ["main"]
 
-# 关键权限设置
 permissions:
-  contents: write  # 允许写入仓库
+  contents: write  # 关键权限设置
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # 获取完整git历史
 
-      # 安装mdBook（使用预编译二进制）
       - name: Setup mdBook
         run: |
-          curl -fsSL https://github.com/rust-lang/mdBook/releases/download/v0.4.34/mdbook-v0.4.34-x86_64-unknown-linux-gnu.tar.gz | tar xz
+          curl -L https://github.com/rust-lang/mdBook/releases/download/v0.4.34/mdbook-v0.4.34-x86_64-unknown-linux-gnu.tar.gz | tar xz
           sudo mv mdbook /usr/local/bin/
 
-      # 构建到子目录
-      - name: Build book
-        run: |
-          mdbook build
-          mkdir -p gh-pages/embodied-intelligence-lab
-          mv book/* gh-pages/embodied-intelligence-lab/
-          echo "ebook.opencamp.cn" > gh-pages/CNAME
+      - name: Build
+        run: mdbook build
 
-      # 部署到gh-pages分支
       - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v2
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          path: ./gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./book
+          force_orphan: true  # 强制清空gh-pages分支
