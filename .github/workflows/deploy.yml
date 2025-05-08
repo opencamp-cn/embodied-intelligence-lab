@@ -1,33 +1,37 @@
-name: Deploy to GitHub Pages
+name: Deploy to gh-pages with Subdirectory
 
 on:
   push:
     branches: ["main"]
-
-permissions:
-  contents: write  # 关键权限设置
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # 获取完整git历史
 
+      # 1. 安装 mdBook (快速安装预编译版本)
       - name: Setup mdBook
         run: |
-          curl -L https://github.com/rust-lang/mdBook/releases/download/v0.4.34/mdbook-v0.4.34-x86_64-unknown-linux-gnu.tar.gz | tar xz
-          sudo mv mdbook /usr/local/bin/
+          curl -fsSL https://github.com/rust-lang/mdBook/releases/download/v0.4.34/mdbook-v0.4.34-x86_64-unknown-linux-gnu.tar.gz | tar xz
+          sudo install mdbook /usr/local/bin/
 
-      - name: Build
-        run: mdbook build
+      # 2. 构建书籍到子目录
+      - name: Build book
+        run: |
+          mdbook build
+          mkdir -p ./gh-pages/embodied-intelligence-lab
+          mv book/* ./gh-pages/embodied-intelligence-lab/
+          
+          # 写入CNAME文件 (无重定向)
+          echo "ebook.opencamp.cn" > ./gh-pages/CNAME
 
+      # 3. 部署到 gh-pages 分支
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./book
-          force_orphan: true  # 强制清空gh-pages分支
-          destination_dir: embodied-intelligence-lab  # 关键参数
-          cname: ebook.opencamp.cn
+          publish_dir: ./gh-pages
+          destination_dir: .  # 重要：直接发布到gh-pages根目录
+          keep_files: false   # 完全替换旧内容

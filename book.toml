@@ -6,7 +6,7 @@ src = "src"
 title = "具身智能系统开发与实践实验指导"
 
 [output.html]
-base-url = "/embodied-intelligence-lab/"  # 所有资源路径自动添加前缀
+base-url = "/embodied-intelligence-lab/"  
 
 [build]
-preprocessors = ["links"]  # 启用链接预处理
+build-dir = "book"
