@@ -1,0 +1,6 @@
+[book]
+authors = ["OpenCamp训练营团队"]
+language = "chinese"
+multilingual = false
+src = "src"
+title = "具身智能系统开发与实践实验指导"
