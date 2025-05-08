@@ -29,3 +29,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./book
           force_orphan: true  # 强制清空gh-pages分支
+          destination_dir: embodied-intelligence-lab  # 关键参数
+          cname: ebook.opencamp.cn
