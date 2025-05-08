@@ -7,8 +7,6 @@ on:
 # 关键权限设置
 permissions:
   contents: write  # 允许写入仓库
-  pages: write     # 允许操作GitHub Pages
-  id-token: write  # 允许OIDC认证
 
 jobs:
   deploy:
